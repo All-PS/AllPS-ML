@@ -3,8 +3,7 @@
 # from sklearn.model_selection import train_test_split
 # from sklearn.metrics import accuracy_score
 # import json
-# from app.util.DatabaseConnection import DatabaseConnection
-# import re
+
 # import joblib
 #
 # with open("tier_solution.json", "r", encoding='utf-8') as file:
@@ -30,46 +29,6 @@
 # y_pred = model.predict(X_test)
 # accuracy = accuracy_score(y_test, y_pred)
 # print("Accuracy:", accuracy)
-
-# DatabaseConnection.startTransaction()
-#
-# cursor = DatabaseConnection().cursor()
-#
-# select_sql = """
-#     SELECT
-#         problem.id AS problem_id,
-#         problem.platform_difficulty_id AS problem_tier,
-#         solution.code AS solution_code
-#     FROM problem
-#     LEFT JOIN solution ON problem.id = solution.problem_id
-#     WHERE problem.platform_id = 3 AND solution.problem_id IS NOT NULL AND solution.code <> 'error'
-#     ORDER BY problem.solved_count
-#     """
-#
-#
-# cursor.execute(select_sql)
-#
-# # 결과 가져오기 및 출력
-# results = cursor.fetchall()
-#
-# data = []
-# for row in results:
-#     # code = re.sub(r'//.*?\n|/\*.*?\*/', '', row[1], flags=re.DOTALL)
-#     # # 줄바꿈 통일
-#     # code = re.sub(r'\s*\n\s*', '\n', code)
-#     # data.append({
-#     #     "problem_tier" : row[0],
-#     #     "solution_code" : code
-#     # })
-#     print(row)
-# # JSON 포맷으로 파일에 저장
-# # with open("tier_solution.json", "w") as file:
-# #     json.dump(data, file, indent=4, ensure_ascii=False)
-#
-# print(len(results))
-
-# DatabaseConnection().close()
-
 
 # v2
 
