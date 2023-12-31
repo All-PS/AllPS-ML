@@ -3,7 +3,7 @@ from app.util.DatabaseConnection import DatabaseConnection
 import re
 import joblib
 from sklearn.feature_extraction.text import CountVectorizer
-model = joblib.load("ML/sklearn_model.pkl")
+model = joblib.load("sklearn_model.pkl")
 
 
 DatabaseConnection.startTransaction()
@@ -29,14 +29,22 @@ results = cursor.fetchall()
 
 X_data = []
 # 저장된 벡터라이저 불러오기
-vectorizer = joblib.load('ML/vectorizer.pkl')
+vectorizer = joblib.load('vectorizer.pkl')
 
 # 학습 단계에서 사용된 동일한 어휘를 사용하여 데이터 벡터화
 
 
 for row in results:
-    code = re.sub(r'//.*?\n|/\*.*?\*/', '', row[2], flags=re.DOTALL)
-    # 줄바꿈 통일
+    code = row[2]
+    match = re.search(r'#include.*?int main.*?return 0;.*?}', code, re.DOTALL)
+    if match:
+        code = match.group(0)
+    else:
+        match2 = re.search(r'#include.*?solution.*?return ans.*?}', code, re.DOTALL)
+        if match2:
+            code = match2.group(0)
+    code = re.sub(r'//.*?\n|/\*.*?\*/', '', code, flags=re.DOTALL)
+    # 주석 제거 및 줄바꿈 통일
     code = re.sub(r'\s*\n\s*', '\n', code)
 
     X_sample = vectorizer.transform([code])
