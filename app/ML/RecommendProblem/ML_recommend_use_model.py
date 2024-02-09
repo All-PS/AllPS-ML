@@ -24,6 +24,8 @@ cursor = DatabaseConnection().cursor()
 
 input_id = int(input("원하는 문제의 ID 입력 : "))
 
+input_select = int(input("원하는 기능 입력(1: 유사한 문제들 중 난이도가 유사한 문제 추천, 2: 유사한 문제들 중 난이도가 더 어려운 문제 추천) : "))
+
 
 def print_problem_info(problem_id):
 
@@ -47,7 +49,7 @@ def print_problem_info(problem_id):
         print("------------------\n")
 
 
-def recommend_similar_problems(problem_id, max_neighbors=30, max_difficulty_difference=2, max_recommendations=5):
+def recommend_similar_problems(problem_id, max_neighbors=30, max_recommendations=5):
     # 주어진 문제의 인덱스 찾기
     index = df.index[df['problem_id'] == problem_id].tolist()[0]
 
@@ -65,8 +67,10 @@ def recommend_similar_problems(problem_id, max_neighbors=30, max_difficulty_diff
     similar_problem_ids = df['problem_id'].iloc[indices[0]].values
 
     # 난이도 조건을 만족하는 문제 필터링
-    filtered_indices = [i for i, diff in enumerate(similar_difficulties)
-                        if abs(diff - problem_difficulty) <= max_difficulty_difference]
+    if input_select == 1:
+        filtered_indices = [j for j, diff in enumerate(similar_difficulties) if abs(diff - problem_difficulty) <= 2]
+    else:
+        filtered_indices = [j for j, diff in enumerate(similar_difficulties) if diff - problem_difficulty > 0 and diff - problem_difficulty <= 10]
     filtered_ids = similar_problem_ids[filtered_indices]
 
     # 거리에 따라 정렬된 상태이므로, 최대 추천 개수만큼 잘라서 반환
@@ -80,9 +84,9 @@ print_problem_info(input_id)
 
 recommended_problem_ids = recommend_similar_problems(input_id)
 i = 1
-for recommand_id in recommended_problem_ids:
+for recommend_id in recommended_problem_ids:
     print(f"{i}번째로 추천된 문제의 정보")
-    print_problem_info(recommand_id)
+    print_problem_info(recommend_id)
     i += 1
 
 DatabaseConnection().close()
