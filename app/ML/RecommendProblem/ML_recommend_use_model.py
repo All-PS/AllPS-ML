@@ -51,7 +51,12 @@ def print_problem_info(problem_id):
 
 def recommend_similar_problems(problem_id, max_neighbors=30, max_recommendations=5):
     # 주어진 문제의 인덱스 찾기
-    index = df.index[df['problem_id'] == problem_id].tolist()[0]
+    try:
+        # 주어진 문제의 인덱스 찾기
+        index = df.index[df['problem_id'] == problem_id].tolist()[0]
+    except IndexError:
+        print(f"Error: (id={problem_id})문제는 카테고리가 존재하지 않아 유사한 문제를 추천할 수 없습니다.")
+        return []
 
     # 주어진 문제의 난이도
     problem_difficulty = df['problem_tier'].iloc[index]
